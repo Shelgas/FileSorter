@@ -7,8 +7,7 @@ class Program
     static void Main(string[] args)
     {
         Console.OutputEncoding = Encoding.UTF8;
-        var a = new FileScanner(@"C:\Users\akozl\Downloads");
-
-        Console.WriteLine("ПРивет");
+        var fileCompose = new FileCompose(@"C:\Users\akozl\Downloads\Telegram Desktop");
+        fileCompose.ComposeByExtension();
     }
 }
