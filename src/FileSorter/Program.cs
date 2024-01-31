@@ -1,6 +1,4 @@
-﻿using FileSorter.Services;
-using FileSorter.UI;
-using System.Text;
+﻿using FileSorter.UI;
 
 namespace FileSorter;
 class Program

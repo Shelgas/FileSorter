@@ -14,48 +14,80 @@ namespace FileSorter.UI
             Console.OutputEncoding = Encoding.UTF8;
             Console.WriteLine("Welcome to FileSorter!");
             Console.WriteLine("Please select a sorting option:");
-            Console.WriteLine("1. Sort by file extension");
-            Console.WriteLine("2. Sort by last modified time");
+            Console.WriteLine("SortE. Sort by file extension");
+            Console.WriteLine("SortL. Sort by last modified time");
             Console.WriteLine("Press 'Esc' to exit or type 'exit' and press 'Enter'");
 
             while (true)
             {
-                ConsoleKeyInfo key = Console.ReadKey(true);
-                if (key.Key == ConsoleKey.Escape)
+                string readLine = ReadLineWithCancel();
+                if (readLine == String.Empty)
                 {
-                    Console.WriteLine("Exiting...");
+                    Console.WriteLine(@"\");
+                    continue;
+                }
+                else if (readLine.Equals("exit", StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine("\nExit...");
                     break;
                 }
-                else if (key.Key == ConsoleKey.D1 || key.Key == ConsoleKey.D2 || key.Key == ConsoleKey.D3)
+                else
                 {
-                    HandleSortingOption(key.Key);
+                    HandleSortingOption(readLine);
+                    continue;
                 }
-                else if (key.Key == ConsoleKey.Enter)
-                {
-                    string input = Console.ReadLine().ToLower();
-                    if (input == "exit")
-                    {
-                        Console.WriteLine("Exiting...");
-                        break;
-                    }
-                }
+                Console.WriteLine();
             }
         }
 
-        private static void HandleSortingOption(ConsoleKey key)
+        private static void HandleSortingOption(string command)
         {
-            var fileCompose = new FileCompose(@"C:\Users\akozl\Downloads\Telegram Desktop\.docx");
-            switch (key)
+            var fileComposer = new FileComposer(@"C:\Users\akozl\Downloads\Telegram Desktop\.pdf");
+            switch (command)
             {
-                case ConsoleKey.D1:
+                case "SortE":
                     Console.WriteLine("Sorting by file type selected.");
-                    fileCompose.ComposeByExtension();
+                    fileComposer.ComposeByExtension();
                     break;
-                case ConsoleKey.D2:
+                case "SortL":
                     Console.WriteLine("Sorting by file size selected.");
-                    fileCompose.ComposeByLastWriteTime();
+                    fileComposer.ComposeByLastWriteTime();
+                    break;
+                default:
+                    Console.WriteLine();
                     break;
             }
+        }
+
+        private static string ReadLineWithCancel()
+        {
+            string result = String.Empty;
+            StringBuilder buffer = new StringBuilder();
+
+            ConsoleKeyInfo info = Console.ReadKey(true);
+            while (info.Key != ConsoleKey.Enter && info.Key != ConsoleKey.Escape)
+            {
+                if (info.Key == ConsoleKey.Backspace && buffer.Length != 0)
+                {
+                    Console.Write("\b \b");
+                    info = Console.ReadKey(true);
+                    buffer.Remove(buffer.Length - 1, 1);
+                    continue;
+                }
+                Console.Write(info.KeyChar);
+                buffer.Append(info.KeyChar);
+                info = Console.ReadKey(true);
+            }
+
+            if (info.Key == ConsoleKey.Escape)
+                return "exit";
+
+            if (info.Key == ConsoleKey.Enter)
+            {
+                result = buffer.ToString();
+            }
+
+            return result;
         }
 
     }

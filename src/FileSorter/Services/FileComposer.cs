@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace FileSorter.Services
 {
-    public class FileCompose
+    public class FileComposer
     {
         private IFileScan _fileScan;
-        public string DirectoryPath { get; private set; }
-        public FileCompose(string path)
+        public string DirectoryPath { get; set; }
+        public FileComposer(string path)
         {
             DirectoryPath = path;
             _fileScan = new FileScanner(DirectoryPath);
