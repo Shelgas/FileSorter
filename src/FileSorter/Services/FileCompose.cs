@@ -20,9 +20,19 @@ namespace FileSorter.Services
 
         public void ComposeByExtension()
         {
+
             foreach (var file in _fileScan.GetAll())
             {
                 var directoryPath = DirectoryCreator.Create(DirectoryPath, file.FileExtension);
+                File.Move(file.FilePath, Path.Combine(directoryPath, file.FileName));
+            }
+        }
+
+        public void ComposeByLastWriteTime()
+        {
+            foreach (var file in _fileScan.GetAll())
+            {
+                var directoryPath = DirectoryCreator.Create(DirectoryPath, file.LastModifiedDate.ToString("dd-MM-yyyy"));
                 File.Move(file.FilePath, Path.Combine(directoryPath, file.FileName));
             }
         }
