@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FileSorter.Interfaces
 {
-    internal interface IFileScan
+    public interface IFileScan
     {
         IEnumerable<FileModel> GetAll();
     }

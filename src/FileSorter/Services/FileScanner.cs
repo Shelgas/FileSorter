@@ -11,16 +11,15 @@ namespace FileSorter.Services
 {
     public class FileScanner : IFileScan
     {
-        private List<FileModel> fileList;
         private string _path;
         public FileScanner(string path)
         {
-            fileList = new List<FileModel>();
             _path = path;
         }
 
         public IEnumerable<FileModel> GetAll()
         {
+            var fileList = new List<FileModel>();
             foreach (var filePath in Directory.GetFiles(_path))
             {
                 fileList.Add(new FileModel(new FileInfo(filePath)));

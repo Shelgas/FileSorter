@@ -1,3 +1,5 @@
+using FileSorter.Interfaces;
+using FileSorter.Models;
 using FileSorter.Services;
 using System;
 using System.Collections.Generic;
@@ -9,6 +11,7 @@ namespace FileSorter.UI
 {
     public static class UserInterface
     {
+        private static readonly IDirectoryManipulator _manipulator = new DirectoryManipulator();
         public static void Start()
         {
             Console.OutputEncoding = Encoding.UTF8;
@@ -18,38 +21,45 @@ namespace FileSorter.UI
             Console.WriteLine("SortL. Sort by last modified time");
             Console.WriteLine("Press 'Esc' to exit or type 'exit' and press 'Enter'");
 
+
             while (true)
             {
+                Console.Write("\n" +_manipulator.GetCurrentDirecrotryPath() + "> ");
                 string readLine = ReadLineWithCancel();
-                if (readLine == String.Empty)
-                {
-                    Console.WriteLine(@"\");
-                    continue;
-                }
-                else if (readLine.Equals("exit", StringComparison.OrdinalIgnoreCase))
+                string[] parts = readLine.Split(new[] { ' ' }, 2);
+                string command = parts[0];
+                string arguments = parts.Length > 1 ? parts[1] : string.Empty;
+
+
+                if (command.Equals("exit", StringComparison.OrdinalIgnoreCase))
                 {
                     Console.WriteLine("\nExit...");
                     break;
                 }
-                else
+                if (command.Equals("sorte", StringComparison.OrdinalIgnoreCase))
                 {
                     HandleSortingOption(readLine);
                     continue;
                 }
-                Console.WriteLine();
+                if (command.Equals("goto", StringComparison.OrdinalIgnoreCase))
+                {
+                    _manipulator.SetDirecrotryPath(arguments);
+                    continue;
+                }
+
             }
         }
 
         private static void HandleSortingOption(string command)
         {
-            var fileComposer = new FileComposer(@"C:\Users\akozl\Downloads\Telegram Desktop\.pdf");
+            var fileComposer = new FileComposer(_manipulator);
             switch (command)
             {
-                case "SortE":
-                    Console.WriteLine("Sorting by file type selected.");
+                case "sort_e":
+                    Console.WriteLine("Sorting by file extension selected.");
                     fileComposer.ComposeByExtension();
                     break;
-                case "SortL":
+                case "sort_l":
                     Console.WriteLine("Sorting by file size selected.");
                     fileComposer.ComposeByLastWriteTime();
                     break;

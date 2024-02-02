@@ -1,21 +1,17 @@
 using FileSorter.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FileSorter.Services
 {
     public class FileComposer
     {
         private IFileScan _fileScan;
-        public string DirectoryPath { get; set; }
-        public FileComposer(string path)
+        private IDirectoryManipulator _directoryManipulator;
+
+        public FileComposer(IDirectoryManipulator directoryManipulator)
         {
-            DirectoryPath = path;
-            _fileScan = new FileScanner(DirectoryPath);
+            
+            _directoryManipulator = directoryManipulator;
+            _fileScan = new FileScanner(_directoryManipulator.GetCurrentDirecrotryPath());
         }
 
         public void ComposeByExtension()
@@ -23,8 +19,10 @@ namespace FileSorter.Services
 
             foreach (var file in _fileScan.GetAll())
             {
-                var directoryPath = DirectoryCreator.Create(DirectoryPath, file.FileExtension);
-                File.Move(file.FilePath, Path.Combine(directoryPath, file.FileName));
+                var newDirectoryPath = Path.Combine(_directoryManipulator.GetCurrentDirecrotryPath(),
+                    file.FileExtension);
+                _directoryManipulator.CreateDirectory(newDirectoryPath);
+                File.Move(file.FilePath, Path.Combine(newDirectoryPath, file.FileName));
             }
         }
 
@@ -32,8 +30,11 @@ namespace FileSorter.Services
         {
             foreach (var file in _fileScan.GetAll())
             {
-                var directoryPath = DirectoryCreator.Create(DirectoryPath, file.LastModifiedDate.ToString("dd-MM-yyyy"));
-                File.Move(file.FilePath, Path.Combine(directoryPath, file.FileName));
+                var newDirectoryPath = Path.Combine(_directoryManipulator.GetCurrentDirecrotryPath(), 
+                    file.LastModifiedDate.ToString("dd-MM-yyyy"));
+                _directoryManipulator.CreateDirectory(newDirectoryPath);
+                File.Move(file.FilePath, Path.Combine(newDirectoryPath, file.FileName));
+
             }
         }
     }
