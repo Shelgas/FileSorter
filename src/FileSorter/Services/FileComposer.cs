@@ -11,29 +11,29 @@ namespace FileSorter.Services
         {
             
             _directoryManipulator = directoryManipulator;
-            _fileScan = new FileScanner(_directoryManipulator.GetCurrentDirecrotryPath());
+            _fileScan = new FileScanner();
         }
 
         public void ComposeByExtension()
         {
 
-            foreach (var file in _fileScan.GetAll())
+            foreach (var file in _fileScan.GetAll(_directoryManipulator.GetCurrentDirecrotryPath()))
             {
                 var newDirectoryPath = Path.Combine(_directoryManipulator.GetCurrentDirecrotryPath(),
-                    file.FileExtension);
+                    file.Extension);
                 _directoryManipulator.CreateDirectory(newDirectoryPath);
-                File.Move(file.FilePath, Path.Combine(newDirectoryPath, file.FileName));
+                File.Move(file.Path, Path.Combine(newDirectoryPath, file.Name));
             }
         }
 
         public void ComposeByLastWriteTime()
         {
-            foreach (var file in _fileScan.GetAll())
+            foreach (var file in _fileScan.GetAll(_directoryManipulator.GetCurrentDirecrotryPath()))
             {
                 var newDirectoryPath = Path.Combine(_directoryManipulator.GetCurrentDirecrotryPath(), 
                     file.LastModifiedDate.ToString("dd-MM-yyyy"));
                 _directoryManipulator.CreateDirectory(newDirectoryPath);
-                File.Move(file.FilePath, Path.Combine(newDirectoryPath, file.FileName));
+                File.Move(file.Path, Path.Combine(newDirectoryPath, file.Name));
 
             }
         }

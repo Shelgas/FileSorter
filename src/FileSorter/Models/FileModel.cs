@@ -6,24 +6,32 @@ using System.Threading.Tasks;
 
 namespace FileSorter.Models
 {
-    public class FileModel
+    public class FileModel : AbstractModel
     {
-        public string FileName { get; set; }
-        public string FilePath { get; set; }
-        public string FileType { get; set; }
-        public string FileExtension { get; set; }
-        public long FileSize { get; set; }
-        public DateTime CreationDate { get; private set; }
-        public DateTime LastModifiedDate { get; set; }
+        public override string Name { get; set; }
+        public override string Path { get; set; }
+        public override string Type { get; set; }
+        public string Extension { get; set; }
+        public override long Size { get; set; }
+        public override DateTime CreationDate { get; protected set; }
+        public override DateTime LastModifiedDate { get; set; }
 
         public FileModel(FileInfo fileInfo)
         {
-            FileName = fileInfo.Name;
-            FilePath = fileInfo.FullName;
-            FileExtension = fileInfo.Extension;
-            FileSize = fileInfo.Length;
+            Name = fileInfo.Name;
+            Path = fileInfo.FullName;
+            Extension = fileInfo.Extension;
+            Size = fileInfo.Length;
             CreationDate = fileInfo.CreationTime;
             LastModifiedDate = fileInfo.LastWriteTime;
+        }
+
+
+        public override string ToString()
+        {
+            var strBuilder = new StringBuilder();
+            strBuilder.Append(Name);
+            return strBuilder.ToString();
         }
 
     }

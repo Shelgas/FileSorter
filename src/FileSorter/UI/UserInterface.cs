@@ -1,6 +1,7 @@
 using FileSorter.Interfaces;
 using FileSorter.Models;
 using FileSorter.Services;
+using Spectre.Console;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,17 +16,15 @@ namespace FileSorter.UI
         public static void Start()
         {
             Console.OutputEncoding = Encoding.UTF8;
-            Console.WriteLine("Welcome to FileSorter!");
-            Console.WriteLine("Please select a sorting option:");
-            Console.WriteLine("SortE. Sort by file extension");
-            Console.WriteLine("SortL. Sort by last modified time");
-            Console.WriteLine("Press 'Esc' to exit or type 'exit' and press 'Enter'");
-
+            AnsiConsole.Write(new FigletText("FileSorter").Color(Color.Red).Centered());
+            AnsiConsole.MarkupLine("[bold underline yellow]Welcome to FileSorter![/]");
+            AnsiConsole.MarkupLine("Press '[underline red]Esc[/]' to exit or type '[underline red]exit[/]' and press 'Enter'");
 
             while (true)
             {
-                Console.Write("\n" +_manipulator.GetCurrentDirecrotryPath() + "> ");
+                Console.Write(_manipulator.GetCurrentDirecrotryPath() + "> ");
                 string readLine = ReadLineWithCancel();
+                Console.Write("\n");
                 string[] parts = readLine.Split(new[] { ' ' }, 2);
                 string command = parts[0];
                 string arguments = parts.Length > 1 ? parts[1] : string.Empty;
@@ -36,9 +35,9 @@ namespace FileSorter.UI
                     Console.WriteLine("\nExit...");
                     break;
                 }
-                if (command.Equals("sorte", StringComparison.OrdinalIgnoreCase))
+                if (command.Equals("sort", StringComparison.OrdinalIgnoreCase))
                 {
-                    HandleSortingOption(readLine);
+                    HandleSortingOption(arguments);
                     continue;
                 }
                 if (command.Equals("goto", StringComparison.OrdinalIgnoreCase))
@@ -46,20 +45,25 @@ namespace FileSorter.UI
                     _manipulator.SetDirecrotryPath(arguments);
                     continue;
                 }
+                if (command.Equals("ll", StringComparison.OrdinalIgnoreCase))
+                {
+                    Browse();
+                    continue;
+                }
 
             }
         }
 
-        private static void HandleSortingOption(string command)
+        private static void HandleSortingOption(string argument)
         {
             var fileComposer = new FileComposer(_manipulator);
-            switch (command)
+            switch (argument)
             {
-                case "sort_e":
+                case "e":
                     Console.WriteLine("Sorting by file extension selected.");
                     fileComposer.ComposeByExtension();
                     break;
-                case "sort_l":
+                case "l":
                     Console.WriteLine("Sorting by file size selected.");
                     fileComposer.ComposeByLastWriteTime();
                     break;
@@ -69,10 +73,29 @@ namespace FileSorter.UI
             }
         }
 
+        private static void Browse()
+        {
+            
+            var list = _manipulator.GetDirectoryFiles().Select(l => l.ToString()).ToList();
+            List<string> files = new List<string>();
+            foreach (var file in list)
+            {
+                if (file is null)
+                    continue;
+                files.Add(file);
+            }
+            var chosenPath = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                .Title("Select [green]folder[/]!")
+                .PageSize(10)
+                .MoreChoicesText("[grey](Move up and down)[/]")
+                .AddChoices(files));
+        }
+
         private static string ReadLineWithCancel()
         {
             string result = String.Empty;
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             ConsoleKeyInfo info = Console.ReadKey(true);
             while (info.Key != ConsoleKey.Enter && info.Key != ConsoleKey.Escape)

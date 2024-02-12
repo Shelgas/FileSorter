@@ -10,12 +10,12 @@ namespace FileSorter.Services
 {
     public class DirectoryManipulator : IDirectoryManipulator
     {
-        private readonly DirectoryInfoModel _directoryInfoModel;
+        private readonly DirectoryModel _directoryInfoModel;
         private readonly IFileScan _fileScan;
         public DirectoryManipulator()
         {
-            _directoryInfoModel = new DirectoryInfoModel();
-            _fileScan = new FileScanner(_directoryInfoModel.DirectoryPath);
+            _directoryInfoModel = new DirectoryModel(new DirectoryInfo($@"C:\Users\akozl\Downloads\Telegram Desktop\"));
+            _fileScan = new FileScanner();
             FillingDirecrotryList();
         }
 
@@ -29,22 +29,28 @@ namespace FileSorter.Services
 
         public string GetCurrentDirecrotryPath()
         {
-            return _directoryInfoModel.DirectoryPath;
+            return _directoryInfoModel.Path;
         }
 
         public void SetDirecrotryPath(string path)
         {
             if (Path.Exists(path))
             {
-                _directoryInfoModel.DirectoryPath = path;
+                _directoryInfoModel.Path = path;
+                FillingDirecrotryList();
             }
 
+        }
+
+        public IEnumerable<FileModel> GetDirectoryFiles()
+        {
+            return _directoryInfoModel.Files;
         }
 
         private void FillingDirecrotryList()
         {
             _directoryInfoModel.Files.Clear();
-            foreach (var file in _fileScan.GetAll())
+            foreach (var file in _fileScan.GetAll(_directoryInfoModel.Path))
                 _directoryInfoModel.Files.Add(file);
         }
     }

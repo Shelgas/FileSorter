@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileSorter.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,5 +12,6 @@ namespace FileSorter.Interfaces
         public void CreateDirectory(string directoryName);
         public void SetDirecrotryPath(string path);
         public string GetCurrentDirecrotryPath();
+        public IEnumerable<FileModel> GetDirectoryFiles();
     }
 }
