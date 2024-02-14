@@ -12,16 +12,40 @@ namespace FileSorter.Services
     public class FileScanner : IFileScan
     {
 
-        public IEnumerable<FileModel> GetAll(string path)
+        public IEnumerable<AbstractModel> GetAll(string path)
         {
-            var b = new DirectoryInfo(path);
+ 
+            var fileList = new List<AbstractModel>();
+            fileList.AddRange(GetDirectories(path));
+            fileList.AddRange(GetFiles(path));
+            return fileList;
+        }
+
+        public IEnumerable<FileModel> GetFiles(string path)
+        {
             var fileList = new List<FileModel>();
-            var a = Directory.GetDirectories(path);
             foreach (var filePath in Directory.GetFiles(path))
             {
                 fileList.Add(new FileModel(new FileInfo(filePath)));
             }
             return fileList;
+        }
+
+        public IEnumerable<DirectoryModel> GetDirectories(string path)
+        {
+            var options = new EnumerationOptions
+            {
+                IgnoreInaccessible = true,
+                RecurseSubdirectories = false,
+
+            };
+            var directoryList = new List<DirectoryModel>();
+            foreach (var filePath in Directory.GetDirectories(path, "*", options))
+            {
+                directoryList.Add(new DirectoryModel(new DirectoryInfo(filePath)));
+            }
+
+            return directoryList;
         }
     }
 }

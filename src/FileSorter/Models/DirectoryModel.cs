@@ -12,11 +12,11 @@ namespace FileSorter.Models
         public override string Name { get; set; }
         public override string Path { get; set; }
         public override string Type { get; set; }
-        public string Extension { get; set; }
+        public override string Extension { get; set; }
         public override long Size { get; set; }
         public override DateTime CreationDate { get; protected set; }
         public override DateTime LastModifiedDate { get; set; }
-        public List<FileModel> Files { get; set; }
+        public List<AbstractModel> Files { get; set; }
 
 
         public DirectoryModel(DirectoryInfo directoryInfo)
@@ -24,10 +24,11 @@ namespace FileSorter.Models
             Name = directoryInfo.Name;
             Path = directoryInfo.FullName;
             Extension = directoryInfo.Extension;
-            Size = DirSize(directoryInfo);
+            //Size = DirSize(directoryInfo);
             CreationDate = directoryInfo.CreationTime;
             LastModifiedDate = directoryInfo.LastWriteTime;
             Type = "Directory";
+            Files = new List<AbstractModel>();
         }
 
 
@@ -45,6 +46,13 @@ namespace FileSorter.Models
                 size += DirSize(di);
             }
             return size;
+        }
+
+        public override string ToString()
+        {
+            var strBuilder = new StringBuilder();
+            strBuilder.Append(Name.Replace('[', ' ').Replace(']', ' '));
+            return strBuilder.ToString();
         }
 
     }

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace FileSorter.UI
 {
@@ -16,42 +17,47 @@ namespace FileSorter.UI
         public static void Start()
         {
             Console.OutputEncoding = Encoding.UTF8;
-            AnsiConsole.Write(new FigletText("FileSorter").Color(Color.Red).Centered());
-            AnsiConsole.MarkupLine("[bold underline yellow]Welcome to FileSorter![/]");
-            AnsiConsole.MarkupLine("Press '[underline red]Esc[/]' to exit or type '[underline red]exit[/]' and press 'Enter'");
 
             while (true)
             {
-                Console.Write(_manipulator.GetCurrentDirecrotryPath() + "> ");
-                string readLine = ReadLineWithCancel();
-                Console.Write("\n");
-                string[] parts = readLine.Split(new[] { ' ' }, 2);
-                string command = parts[0];
-                string arguments = parts.Length > 1 ? parts[1] : string.Empty;
+                ShowHeader("Menu");
+                var selectedOptions = ShowOptions();
 
 
-                if (command.Equals("exit", StringComparison.OrdinalIgnoreCase))
+                if (selectedOptions.Equals("exit", StringComparison.OrdinalIgnoreCase))
                 {
                     Console.WriteLine("\nExit...");
                     break;
                 }
-                if (command.Equals("sort", StringComparison.OrdinalIgnoreCase))
+                if (selectedOptions.Equals("sort", StringComparison.OrdinalIgnoreCase))
                 {
-                    HandleSortingOption(arguments);
+                    //HandleSortingOption(arguments);
                     continue;
                 }
-                if (command.Equals("goto", StringComparison.OrdinalIgnoreCase))
+                if (selectedOptions.Equals("goto", StringComparison.OrdinalIgnoreCase))
                 {
-                    _manipulator.SetDirecrotryPath(arguments);
+                    SelectDirectory();
                     continue;
                 }
-                if (command.Equals("ll", StringComparison.OrdinalIgnoreCase))
+                if (selectedOptions.Equals("ll", StringComparison.OrdinalIgnoreCase))
                 {
-                    Browse();
+                    BrowseDirectory();
                     continue;
                 }
 
             }
+        }
+
+
+        private static string ShowOptions()
+        {
+            var commandList = new List<string>() { "Goto", "Sort" ,"Exit",  };
+            return AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                .Title("Select [green]command[/]!")
+                .PageSize(10)
+                .MoreChoicesText("[grey](Move up and down)[/]")
+                .AddChoices(commandList));
         }
 
         private static void HandleSortingOption(string argument)
@@ -61,11 +67,11 @@ namespace FileSorter.UI
             {
                 case "e":
                     Console.WriteLine("Sorting by file extension selected.");
-                    fileComposer.ComposeByExtension();
+                    fileComposer.ComposeFilesByExtension();
                     break;
                 case "l":
                     Console.WriteLine("Sorting by file size selected.");
-                    fileComposer.ComposeByLastWriteTime();
+                    fileComposer.ComposeFilesByLastWriteTime();
                     break;
                 default:
                     Console.WriteLine();
@@ -73,23 +79,49 @@ namespace FileSorter.UI
             }
         }
 
-        private static void Browse()
+        private static void SelectDirectory()
         {
-            
-            var list = _manipulator.GetDirectoryFiles().Select(l => l.ToString()).ToList();
-            List<string> files = new List<string>();
-            foreach (var file in list)
+            while (true)
             {
-                if (file is null)
+                var selectedFile = BrowseDirectory();
+                var path = _manipulator.GetCurrentDirecrotryPath();
+                if (path.Length <= 3 && selectedFile.Equals("\u2B8C"))
+                {
+                    _manipulator.SetDirecrotryPath(BrowseDrive());
                     continue;
-                files.Add(file);
-            }
-            var chosenPath = AnsiConsole.Prompt(
+                }
+                if (selectedFile.Equals("\u2B8C"))
+                    _manipulator.SetDirecrotryPath(SubstringPath(path));
+                if (Directory.Exists(Path.Combine(path, selectedFile)))
+                    _manipulator.SetDirecrotryPath(Path.Combine(path, selectedFile));
+                if (selectedFile.Equals("\u2713"))
+                    break;
+            }   
+        }
+
+        private static string BrowseDirectory()
+        {
+            ShowHeader("Browse Directory");
+            var list = _manipulator.GetDirectoryFiles().Select(l => l.ToString()).ToList();
+            List<string> files = new List<string>() { "\u2713", "\u2B8C" };
+            files.AddRange(list);
+            return AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                 .Title("Select [green]folder[/]!")
                 .PageSize(10)
                 .MoreChoicesText("[grey](Move up and down)[/]")
                 .AddChoices(files));
+        }
+
+        private static string BrowseDrive()
+        {
+            ShowHeader("Browse Drive");
+            return AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                .Title("Select [green]drive[/]!")
+                .PageSize(10)
+                .MoreChoicesText("[grey](Move up and down)[/]")
+                .AddChoices(DriveInfo.GetDrives().Select(l => l.Name).ToList()));
         }
 
         private static string ReadLineWithCancel()
@@ -122,6 +154,36 @@ namespace FileSorter.UI
 
             return result;
         }
+
+        private static string SubstringPath(string path)
+        {
+            for (int i = path.Length - 3; i > 0; i--)
+            {
+                if (path[i].ToString() == @"\")
+                {
+                    return path.Substring(0, i + 1);
+                }
+            }
+            return path;
+        }
+
+        private static void ShowHeader(string ruleName)
+        {
+            Console.Clear();
+            AnsiConsole.Write(new FigletText("FileSorter").Color(Color.Red).Centered());
+            var rule = new Rule($"[red]{ruleName}[/]");
+            AnsiConsole.Write(rule.Justify(Justify.Left));
+            var path = new TextPath(_manipulator.GetCurrentDirecrotryPath())
+                .RootColor(Color.Red)
+                .SeparatorColor(Color.Green)
+                .StemColor(Color.Blue)
+                .LeafColor(Color.Yellow);
+            Console.Write("Current path:");
+            AnsiConsole.Write(path);
+            AnsiConsole.Write("\n");
+
+        }
+
 
     }
 }

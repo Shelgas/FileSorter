@@ -9,6 +9,9 @@ namespace FileSorter.Interfaces
 {
     public interface IFileScan
     {
-        IEnumerable<FileModel> GetAll(string path);
+        IEnumerable<AbstractModel> GetAll(string path);
+        IEnumerable<FileModel> GetFiles(string path);
+        IEnumerable<DirectoryModel> GetDirectories(string path);
+
     }
 }

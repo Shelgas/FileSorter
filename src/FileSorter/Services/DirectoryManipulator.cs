@@ -15,7 +15,7 @@ namespace FileSorter.Services
         public DirectoryManipulator()
         {
             _directoryInfoModel = new DirectoryModel(new DirectoryInfo($@"C:\Users\akozl\Downloads\Telegram Desktop\"));
-            _fileScan = new FileScanner();
+                _fileScan = new FileScanner();
             FillingDirecrotryList();
         }
 
@@ -42,7 +42,7 @@ namespace FileSorter.Services
 
         }
 
-        public IEnumerable<FileModel> GetDirectoryFiles()
+        public IEnumerable<AbstractModel> GetDirectoryFiles()
         {
             return _directoryInfoModel.Files;
         }

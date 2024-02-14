@@ -11,7 +11,7 @@ namespace FileSorter.Models
         public override string Name { get; set; }
         public override string Path { get; set; }
         public override string Type { get; set; }
-        public string Extension { get; set; }
+        public override string Extension { get; set; }
         public override long Size { get; set; }
         public override DateTime CreationDate { get; protected set; }
         public override DateTime LastModifiedDate { get; set; }
@@ -30,7 +30,7 @@ namespace FileSorter.Models
         public override string ToString()
         {
             var strBuilder = new StringBuilder();
-            strBuilder.Append(Name);
+            strBuilder.Append(Name.Replace('[', ' ').Replace(']', ' '));
             return strBuilder.ToString();
         }
 

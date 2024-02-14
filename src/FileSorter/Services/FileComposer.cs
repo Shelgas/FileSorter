@@ -14,10 +14,10 @@ namespace FileSorter.Services
             _fileScan = new FileScanner();
         }
 
-        public void ComposeByExtension()
+        public void ComposeFilesByExtension()
         {
 
-            foreach (var file in _fileScan.GetAll(_directoryManipulator.GetCurrentDirecrotryPath()))
+            foreach (var file in _fileScan.GetFiles(_directoryManipulator.GetCurrentDirecrotryPath()))
             {
                 var newDirectoryPath = Path.Combine(_directoryManipulator.GetCurrentDirecrotryPath(),
                     file.Extension);
@@ -26,7 +26,7 @@ namespace FileSorter.Services
             }
         }
 
-        public void ComposeByLastWriteTime()
+        public void ComposeFilesByLastWriteTime()
         {
             foreach (var file in _fileScan.GetAll(_directoryManipulator.GetCurrentDirecrotryPath()))
             {
