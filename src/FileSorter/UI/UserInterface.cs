@@ -21,7 +21,7 @@ namespace FileSorter.UI
             while (true)
             {
                 ShowHeader("Menu");
-                var selectedOptions = ShowOptions();
+                var selectedOptions = ShowOptions(StartMenuOption.GetOptions());
 
 
                 if (selectedOptions.Equals("exit", StringComparison.OrdinalIgnoreCase))
@@ -49,9 +49,9 @@ namespace FileSorter.UI
         }
 
 
-        private static string ShowOptions()
+        private static string ShowOptions(List<string> options) 
         {
-            var commandList = new List<string>() { "Goto", "Sort" ,"Exit",  };
+            var commandList = options;
             return AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                 .Title("Select [green]command[/]!")
@@ -124,36 +124,6 @@ namespace FileSorter.UI
                 .AddChoices(DriveInfo.GetDrives().Select(l => l.Name).ToList()));
         }
 
-        private static string ReadLineWithCancel()
-        {
-            string result = String.Empty;
-            StringBuilder buffer = new();
-
-            ConsoleKeyInfo info = Console.ReadKey(true);
-            while (info.Key != ConsoleKey.Enter && info.Key != ConsoleKey.Escape)
-            {
-                if (info.Key == ConsoleKey.Backspace && buffer.Length != 0)
-                {
-                    Console.Write("\b \b");
-                    info = Console.ReadKey(true);
-                    buffer.Remove(buffer.Length - 1, 1);
-                    continue;
-                }
-                Console.Write(info.KeyChar);
-                buffer.Append(info.KeyChar);
-                info = Console.ReadKey(true);
-            }
-
-            if (info.Key == ConsoleKey.Escape)
-                return "exit";
-
-            if (info.Key == ConsoleKey.Enter)
-            {
-                result = buffer.ToString();
-            }
-
-            return result;
-        }
 
         private static string SubstringPath(string path)
         {

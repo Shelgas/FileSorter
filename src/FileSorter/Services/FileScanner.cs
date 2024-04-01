@@ -23,8 +23,14 @@ namespace FileSorter.Services
 
         public IEnumerable<FileModel> GetFiles(string path)
         {
+            var options = new EnumerationOptions
+            {
+                IgnoreInaccessible = true,
+                RecurseSubdirectories = false,
+
+            };
             var fileList = new List<FileModel>();
-            foreach (var filePath in Directory.GetFiles(path))
+            foreach (var filePath in Directory.GetFiles(path, "*", options))
             {
                 fileList.Add(new FileModel(new FileInfo(filePath)));
             }
