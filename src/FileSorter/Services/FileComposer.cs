@@ -24,6 +24,7 @@ namespace FileSorter.Services
                 _directoryManipulator.CreateDirectory(newDirectoryPath);
                 File.Move(file.Path, Path.Combine(newDirectoryPath, file.Name));
             }
+            _directoryManipulator.FillingDirecrotryList();
         }
 
         public void ComposeFilesByLastWriteTime()
@@ -34,7 +35,7 @@ namespace FileSorter.Services
                     file.LastModifiedDate.ToString("dd-MM-yyyy"));
                 _directoryManipulator.CreateDirectory(newDirectoryPath);
                 File.Move(file.Path, Path.Combine(newDirectoryPath, file.Name));
-
+                _directoryManipulator.FillingDirecrotryList();
             }
         }
     }

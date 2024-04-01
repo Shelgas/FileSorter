@@ -24,7 +24,6 @@ namespace FileSorter.Models
             Name = directoryInfo.Name;
             Path = directoryInfo.FullName;
             Extension = directoryInfo.Extension;
-            //Size = DirSize(directoryInfo);
             CreationDate = directoryInfo.CreationTime;
             LastModifiedDate = directoryInfo.LastWriteTime;
             Type = "Directory";

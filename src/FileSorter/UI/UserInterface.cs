@@ -1,5 +1,6 @@
 using FileSorter.Interfaces;
 using FileSorter.Models;
+using FileSorter.Models.MenuOptions;
 using FileSorter.Services;
 using Spectre.Console;
 using System;
@@ -21,7 +22,7 @@ namespace FileSorter.UI
             while (true)
             {
                 ShowHeader("Menu");
-                var selectedOptions = ShowOptions(StartMenuOption.GetOptions());
+                var selectedOptions = ShowOptions(OptionsGetter.GetOptions(typeof(StartMenuOption)));
 
 
                 if (selectedOptions.Equals("exit", StringComparison.OrdinalIgnoreCase))
@@ -31,7 +32,7 @@ namespace FileSorter.UI
                 }
                 if (selectedOptions.Equals("sort", StringComparison.OrdinalIgnoreCase))
                 {
-                    //HandleSortingOption(arguments);
+                    HandleSortingOption();
                     continue;
                 }
                 if (selectedOptions.Equals("goto", StringComparison.OrdinalIgnoreCase))
@@ -39,12 +40,11 @@ namespace FileSorter.UI
                     SelectDirectory();
                     continue;
                 }
-                if (selectedOptions.Equals("ll", StringComparison.OrdinalIgnoreCase))
+                if (selectedOptions.Equals("show", StringComparison.OrdinalIgnoreCase))
                 {
-                    BrowseDirectory();
+                    GetAllFiles();
                     continue;
                 }
-
             }
         }
 
@@ -60,14 +60,16 @@ namespace FileSorter.UI
                 .AddChoices(commandList));
         }
 
-        private static void HandleSortingOption(string argument)
+        private static void HandleSortingOption()
         {
+            var selectedOptions = ShowOptions(OptionsGetter.GetOptions(typeof(SortMenuOption)));
             var fileComposer = new FileComposer(_manipulator);
-            switch (argument)
+            switch (selectedOptions)
             {
-                case "e":
-                    Console.WriteLine("Sorting by file extension selected.");
+                case "Extension":
                     fileComposer.ComposeFilesByExtension();
+                    break;
+                case "cansel":
                     break;
                 case "l":
                     Console.WriteLine("Sorting by file size selected.");
@@ -83,7 +85,7 @@ namespace FileSorter.UI
         {
             while (true)
             {
-                var selectedFile = BrowseDirectory();
+                var selectedFile = GetDirectories();
                 var path = _manipulator.GetCurrentDirecrotryPath();
                 if (path.Length <= 3 && selectedFile.Equals("\u2B8C"))
                 {
@@ -99,18 +101,28 @@ namespace FileSorter.UI
             }   
         }
 
-        private static string BrowseDirectory()
+        private static string BrowsePrompt(List<string> fileList)
         {
-            ShowHeader("Browse Directory");
-            var list = _manipulator.GetDirectoryFiles().Select(l => l.ToString()).ToList();
-            List<string> files = new List<string>() { "\u2713", "\u2B8C" };
-            files.AddRange(list);
             return AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                 .Title("Select [green]folder[/]!")
                 .PageSize(10)
                 .MoreChoicesText("[grey](Move up and down)[/]")
-                .AddChoices(files));
+                .AddChoices(fileList));
+        }
+        private static string GetDirectories()
+        {
+            ShowHeader("Browse Directory");
+            List<string> files = new List<string>() { "\u2713", "\u2B8C" };
+            files.AddRange(_manipulator.GetSubDirectories().Select(l => l.ToString()).ToList());
+            return BrowsePrompt(files);
+        }
+
+        private static string GetAllFiles()
+        {
+            ShowHeader("Browse Directory");
+            var fileList = _manipulator.GetDirectoryFiles().Select(l => l.ToString()).ToList();
+            return BrowsePrompt(fileList);
         }
 
         private static string BrowseDrive()

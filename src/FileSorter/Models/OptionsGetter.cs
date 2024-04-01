@@ -7,15 +7,10 @@ using System.Threading.Tasks;
 
 namespace FileSorter.Models
 {
-    public static class StartMenuOption
+    public static class OptionsGetter
     {
-        public static readonly string GoTo = "GoTo";
-        public static readonly string Sort = "Sort";
-        public static readonly string Exit = "Exit";
-
-        public static List<string> GetOptions()
+        public static List<string> GetOptions(Type type)
         {
-            var type = typeof(StartMenuOption);
             var options = new List<string>();
             FieldInfo[] staticFields = type.GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 

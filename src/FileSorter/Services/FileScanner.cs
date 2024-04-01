@@ -48,9 +48,12 @@ namespace FileSorter.Services
             var directoryList = new List<DirectoryModel>();
             foreach (var filePath in Directory.GetDirectories(path, "*", options))
             {
-                directoryList.Add(new DirectoryModel(new DirectoryInfo(filePath)));
+                var directoryInfo = new DirectoryInfo(filePath);
+                if (directoryInfo.Name[0] != '.')
+                {
+                    directoryList.Add(new DirectoryModel(new DirectoryInfo(filePath)));
+                }    
             }
-
             return directoryList;
         }
     }
