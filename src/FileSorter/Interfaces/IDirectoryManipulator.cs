@@ -12,7 +12,7 @@ namespace FileSorter.Interfaces
         public void CreateDirectory(string directoryName);
         public void SetDirecrotryPath(string path);
         public string GetCurrentDirecrotryPath();
-        public IEnumerable<AbstractModel> GetDirectoryFiles();
+        public IEnumerable<AbstractModel> GetDirectoryAllObjects();
         public IEnumerable<AbstractModel> GetSubDirectories();
         public void FillingDirecrotryList();
     }

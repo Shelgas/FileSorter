@@ -37,9 +37,14 @@ namespace FileSorter.Services
 
         }
 
-        public IEnumerable<AbstractModel> GetDirectoryFiles()
+        public IEnumerable<AbstractModel> GetDirectoryAllObjects()
         {
             return _directoryInfoModel.Files;
+        }
+
+        public IEnumerable<AbstractModel> GetDirectoryFiles()
+        {
+            return _directoryInfoModel.Files.Where(x => x.Type != "Directory");
         }
 
         public IEnumerable<AbstractModel> GetSubDirectories()

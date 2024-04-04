@@ -71,13 +71,12 @@ namespace FileSorter.UI
             switch (selectedOptions)
             {
                 case "Extension":
-                    fileComposer.ComposeFilesByExtension();
+                    fileComposer.ComposeFilesBy(_manipulator.GetDirectoryAllObjects(), (x) => (x.Extension), _manipulator.GetCurrentDirecrotryPath());
                     break;
                 case "cansel":
                     break;
                 case "Type":
-                    Console.WriteLine("Sorting by file size selected.");
-                    fileComposer.ComposeFilesByType();
+                    fileComposer.ComposeFilesBy(_manipulator.GetDirectoryAllObjects(), (x) => (x.Type), _manipulator.GetCurrentDirecrotryPath());
                     break;
                 default:
                     Console.WriteLine();
@@ -125,7 +124,7 @@ namespace FileSorter.UI
         private string GetAllFiles()
         {
             ShowHeader("Browse Directory");
-            var fileList = _manipulator.GetDirectoryFiles().Select(l => l.ToString()).ToList();
+            var fileList = _manipulator.GetDirectoryAllObjects().Select(l => l.ToString()).ToList();
             return BrowsePrompt(fileList);
         }
 

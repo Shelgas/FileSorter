@@ -1,9 +1,9 @@
-﻿namespace FileSorter.Interfaces
+﻿using FileSorter.Models;
+
+namespace FileSorter.Interfaces
 {
     public interface IFileComposer
     {
-        void ComposeFilesByExtension();
-        void ComposeFilesByLastWriteTime();
-        void ComposeFilesByType();
+        void ComposeFilesBy(IEnumerable<AbstractModel> files, Func<AbstractModel, string> option, string targetPath);
     }
 }

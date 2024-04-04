@@ -1,11 +1,5 @@
 ﻿using FileSorter.Interfaces;
 using FileSorter.Models;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FileSorter.Services
 {
@@ -74,7 +68,7 @@ namespace FileSorter.Services
                     if (t == extension) return item.Key;
                 }
             }
-            return extension;
+            return extension.Substring(1);
         }
     }
 }

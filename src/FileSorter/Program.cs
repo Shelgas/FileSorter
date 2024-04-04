@@ -1,5 +1,4 @@
 ﻿using FileSorter.Interfaces;
-using FileSorter.Models;
 using FileSorter.Services;
 using FileSorter.UI;
 using Microsoft.Extensions.Configuration;
