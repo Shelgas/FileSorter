@@ -28,9 +28,10 @@ class Program
         Host.CreateDefaultBuilder()
         .ConfigureServices((context, services) =>
         {
-            services.AddSingleton<IDirectoryManipulator, DirectoryManipulator>();
+            
             services.AddSingleton<IFileScan, FileScanner>();
             services.AddSingleton<IFileComposer, FileComposer>();
+            services.AddSingleton<IDirectoryManipulator, DirectoryManipulator>();
             services.AddSingleton(config.GetSection("FileTypes").Get<Dictionary<string, List<string>>>());
         })
         .Build();

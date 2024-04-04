@@ -10,13 +10,10 @@ namespace FileSorter.UI
     public class UserInterface
     {
         private readonly IDirectoryManipulator _manipulator;
-        private readonly IFileComposer fileComposer;
-        private readonly IConfiguration _config;
 
-        public UserInterface(IDirectoryManipulator manipulator, IFileComposer fileComposer)
+        public UserInterface(IDirectoryManipulator manipulator)
         {
             _manipulator = manipulator;
-            this.fileComposer = fileComposer;
         }
 
 
@@ -68,20 +65,8 @@ namespace FileSorter.UI
         private void HandleSortingOption()
         {
             var selectedOptions = ShowOptions(OptionsGetter.GetOptions(typeof(SortMenuOption)));
-            switch (selectedOptions)
-            {
-                case "Extension":
-                    fileComposer.ComposeFilesBy(_manipulator.GetDirectoryAllObjects(), (x) => (x.Extension), _manipulator.GetCurrentDirecrotryPath());
-                    break;
-                case "cansel":
-                    break;
-                case "Type":
-                    fileComposer.ComposeFilesBy(_manipulator.GetDirectoryAllObjects(), (x) => (x.Type), _manipulator.GetCurrentDirecrotryPath());
-                    break;
-                default:
-                    Console.WriteLine();
-                    break;
-            }
+            if (selectedOptions != "Cansel")
+                _manipulator.ComposeFile(selectedOptions);
         }
 
         private void SelectDirectory()

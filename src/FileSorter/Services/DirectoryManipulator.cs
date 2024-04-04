@@ -7,10 +7,29 @@ namespace FileSorter.Services
     {
         private readonly DirectoryModel _directoryInfoModel;
         private readonly IFileScan _fileScan;
-        public DirectoryManipulator(IFileScan fileScan)
+        private readonly IFileComposer _fileComposer;
+
+        public DirectoryManipulator(IFileScan fileScan, IFileComposer fileComposer)
         {
             _directoryInfoModel = new DirectoryModel(new DirectoryInfo($@"C:\Users\akozl\Downloads\Telegram Desktop\"));
             _fileScan = fileScan;
+            _fileComposer = fileComposer;
+            FillingDirecrotryList();
+        }
+
+        public void ComposeFile(string selectedOptions)
+        {
+            Func<AbstractModel, string> func = (x) => (x.Type);
+            switch (selectedOptions)
+            {
+                case "Extension":
+                    func = (x) => (x.Extension);
+                    break;
+                case "Type":
+                    func = (x) => (x.Type);
+                    break;
+            }
+            _fileComposer.ComposeFilesBy(GetDirectoryAllObjects(), func, GetCurrentDirecrotryPath());
             FillingDirecrotryList();
         }
 
