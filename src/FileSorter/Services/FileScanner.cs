@@ -11,7 +11,12 @@ namespace FileSorter.Services
 {
     public class FileScanner : IFileScan
     {
+        private readonly Dictionary<string, List<string>> _fileTypeMappings;
 
+        public FileScanner(Dictionary<string, List<string>> fileTypeMappings)
+        {
+            _fileTypeMappings = fileTypeMappings;
+        }
         public IEnumerable<AbstractModel> GetAll(string path)
         {
  
@@ -32,7 +37,9 @@ namespace FileSorter.Services
             var fileList = new List<FileModel>();
             foreach (var filePath in Directory.GetFiles(path, "*", options))
             {
-                fileList.Add(new FileModel(new FileInfo(filePath)));
+                var fileInfo = new FileInfo(filePath);
+                var type = GetFileType(fileInfo.Extension);
+                fileList.Add(new FileModel(fileInfo, type));
             }
             return fileList;
         }
@@ -45,6 +52,7 @@ namespace FileSorter.Services
                 RecurseSubdirectories = false,
 
             };
+
             var directoryList = new List<DirectoryModel>();
             foreach (var filePath in Directory.GetDirectories(path, "*", options))
             {
@@ -55,6 +63,18 @@ namespace FileSorter.Services
                 }    
             }
             return directoryList;
+        }
+
+        private string GetFileType(string extension)
+        {
+            foreach (var item in _fileTypeMappings)
+            {
+                foreach (var t in item.Value)
+                {
+                    if (t == extension) return item.Key;
+                }
+            }
+            return extension;
         }
     }
 }

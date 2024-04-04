@@ -16,7 +16,7 @@ namespace FileSorter.Models
         public override DateTime CreationDate { get; protected set; }
         public override DateTime LastModifiedDate { get; set; }
 
-        public FileModel(FileInfo fileInfo)
+        public FileModel(FileInfo fileInfo, string type)
         {
             Name = fileInfo.Name;
             Path = fileInfo.FullName;
@@ -24,6 +24,7 @@ namespace FileSorter.Models
             Size = fileInfo.Length;
             CreationDate = fileInfo.CreationTime;
             LastModifiedDate = fileInfo.LastWriteTime;
+            Type = type;
         }
 
 

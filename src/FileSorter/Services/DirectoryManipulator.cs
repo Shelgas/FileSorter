@@ -1,10 +1,5 @@
 using FileSorter.Interfaces;
 using FileSorter.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FileSorter.Services
 {
@@ -12,10 +7,10 @@ namespace FileSorter.Services
     {
         private readonly DirectoryModel _directoryInfoModel;
         private readonly IFileScan _fileScan;
-        public DirectoryManipulator()
+        public DirectoryManipulator(IFileScan fileScan)
         {
             _directoryInfoModel = new DirectoryModel(new DirectoryInfo($@"C:\Users\akozl\Downloads\Telegram Desktop\"));
-            _fileScan = new FileScanner();
+            _fileScan = fileScan;
             FillingDirecrotryList();
         }
 

@@ -1,21 +1,26 @@
 using FileSorter.Interfaces;
 using FileSorter.Models;
 using FileSorter.Models.MenuOptions;
-using FileSorter.Services;
+using Microsoft.Extensions.Configuration;
 using Spectre.Console;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace FileSorter.UI
 {
-    public static class UserInterface
+    public class UserInterface
     {
-        private static readonly IDirectoryManipulator _manipulator = new DirectoryManipulator();
-        public static void Start()
+        private readonly IDirectoryManipulator _manipulator;
+        private readonly IFileComposer fileComposer;
+        private readonly IConfiguration _config;
+
+        public UserInterface(IDirectoryManipulator manipulator, IFileComposer fileComposer)
+        {
+            _manipulator = manipulator;
+            this.fileComposer = fileComposer;
+        }
+
+
+        public void Start()
         {
             Console.OutputEncoding = Encoding.UTF8;
 
@@ -49,7 +54,7 @@ namespace FileSorter.UI
         }
 
 
-        private static string ShowOptions(List<string> options) 
+        private string ShowOptions(List<string> options) 
         {
             var commandList = options;
             return AnsiConsole.Prompt(
@@ -60,10 +65,9 @@ namespace FileSorter.UI
                 .AddChoices(commandList));
         }
 
-        private static void HandleSortingOption()
+        private void HandleSortingOption()
         {
             var selectedOptions = ShowOptions(OptionsGetter.GetOptions(typeof(SortMenuOption)));
-            var fileComposer = new FileComposer(_manipulator);
             switch (selectedOptions)
             {
                 case "Extension":
@@ -71,9 +75,9 @@ namespace FileSorter.UI
                     break;
                 case "cansel":
                     break;
-                case "l":
+                case "Type":
                     Console.WriteLine("Sorting by file size selected.");
-                    fileComposer.ComposeFilesByLastWriteTime();
+                    fileComposer.ComposeFilesByType();
                     break;
                 default:
                     Console.WriteLine();
@@ -81,7 +85,7 @@ namespace FileSorter.UI
             }
         }
 
-        private static void SelectDirectory()
+        private void SelectDirectory()
         {
             while (true)
             {
@@ -101,7 +105,7 @@ namespace FileSorter.UI
             }   
         }
 
-        private static string BrowsePrompt(List<string> fileList)
+        private string BrowsePrompt(List<string> fileList)
         {
             return AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
@@ -110,7 +114,7 @@ namespace FileSorter.UI
                 .MoreChoicesText("[grey](Move up and down)[/]")
                 .AddChoices(fileList));
         }
-        private static string GetDirectories()
+        private string GetDirectories()
         {
             ShowHeader("Browse Directory");
             List<string> files = new List<string>() { "\u2713", "\u2B8C" };
@@ -118,14 +122,14 @@ namespace FileSorter.UI
             return BrowsePrompt(files);
         }
 
-        private static string GetAllFiles()
+        private string GetAllFiles()
         {
             ShowHeader("Browse Directory");
             var fileList = _manipulator.GetDirectoryFiles().Select(l => l.ToString()).ToList();
             return BrowsePrompt(fileList);
         }
 
-        private static string BrowseDrive()
+        private string BrowseDrive()
         {
             ShowHeader("Browse Drive");
             return AnsiConsole.Prompt(
@@ -137,7 +141,7 @@ namespace FileSorter.UI
         }
 
 
-        private static string SubstringPath(string path)
+        private string SubstringPath(string path)
         {
             for (int i = path.Length - 3; i > 0; i--)
             {
@@ -149,7 +153,7 @@ namespace FileSorter.UI
             return path;
         }
 
-        private static void ShowHeader(string ruleName)
+        private void ShowHeader(string ruleName)
         {
             Console.Clear();
             AnsiConsole.Write(new FigletText("FileSorter").Color(Color.Red).Centered());

@@ -10,6 +10,7 @@ namespace FileSorter.Models.MenuOptions
     {
         public static readonly string SrortByDate = "Date";
         public static readonly string SortByExtension = "Extension";
+        public static readonly string SortByType = "Type";
         public static readonly string Cansel = "Cansel";
     }
 }
