@@ -28,6 +28,8 @@ namespace FileSorter.Models
         }
 
 
+
+
         public override string ToString()
         {
             var strBuilder = new StringBuilder();
