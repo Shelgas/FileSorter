@@ -15,6 +15,6 @@ namespace FileSorter.Interfaces
         public IEnumerable<AbstractModel> GetDirectoryAllObjects();
         public IEnumerable<AbstractModel> GetSubDirectories();
         public void FillingDirecrotryList();
-        public void ComposeFile(string selectedOptions);
+        public void ComposeFile(string selectedOptions, string filterOption);
     }
 }

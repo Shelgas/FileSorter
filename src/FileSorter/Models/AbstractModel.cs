@@ -15,5 +15,7 @@ namespace FileSorter.Models
         public abstract long Size { get; set; }
         public abstract DateTime CreationDate { get; protected set; }
         public abstract DateTime LastModifiedDate { get; set; }
+
+        public string GetDate() => LastModifiedDate.Date.ToString().Split(' ')[0];
     }
 }

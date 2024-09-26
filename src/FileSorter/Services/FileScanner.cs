@@ -68,6 +68,8 @@ namespace FileSorter.Services
                     if (t == extension) return item.Key;
                 }
             }
+            if (extension.Length == 0)
+                return "";
             return extension.Substring(1);
         }
     }

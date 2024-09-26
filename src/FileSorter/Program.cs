@@ -1,4 +1,5 @@
 ﻿using FileSorter.Interfaces;
+using FileSorter.Models;
 using FileSorter.Services;
 using FileSorter.UI;
 using Microsoft.Extensions.Configuration;
@@ -33,6 +34,8 @@ class Program
             services.AddSingleton<IFileComposer, FileComposer>();
             services.AddSingleton<IDirectoryManipulator, DirectoryManipulator>();
             services.AddSingleton(config.GetSection("FileTypes").Get<Dictionary<string, List<string>>>());
+            services.AddSingleton(new DirectoryModel(new DirectoryInfo(
+                config.GetSection("DefaultPath").Value ?? Directory.GetCurrentDirectory())));
         })
         .Build();
 }

@@ -1,7 +1,8 @@
-using FileSorter.Interfaces;
+﻿using FileSorter.Interfaces;
 using FileSorter.Models;
 using FileSorter.Models.MenuOptions;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Spectre.Console;
 using System.Text;
 
@@ -25,7 +26,6 @@ namespace FileSorter.UI
             {
                 ShowHeader("Menu");
                 var selectedOptions = ShowOptions(OptionsGetter.GetOptions(typeof(StartMenuOption)));
-
 
                 if (selectedOptions.Equals("exit", StringComparison.OrdinalIgnoreCase))
                 {
@@ -51,23 +51,49 @@ namespace FileSorter.UI
         }
 
 
-        private string ShowOptions(List<string> options) 
+        private string ShowOptions(List<string> options, string title = "Select [green]command[/]!", bool useBack = false) 
         {
-            var commandList = options;
+            List<string> optionsList = new List<string>();
+            if (useBack) optionsList.Add("\u2B8C");
+
+            optionsList.AddRange(options);
             return AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                .Title("Select [green]command[/]!")
+                .Title(title)
                 .PageSize(10)
                 .MoreChoicesText("[grey](Move up and down)[/]")
-                .AddChoices(commandList));
+                .AddChoices(optionsList));
         }
 
         private void HandleSortingOption()
         {
-            var selectedOptions = ShowOptions(OptionsGetter.GetOptions(typeof(SortMenuOption)));
-            if (selectedOptions != "Cansel")
-                _manipulator.ComposeFile(selectedOptions);
+
+            while (true)
+            {
+                var selectedOptions = ShowOptions(
+                OptionsGetter.GetOptions(typeof(SortMenuOption)),
+                "Select compose options!", true);
+                if (selectedOptions == "⮌")
+                    break;
+                var filterOptions = GetDateFilter();
+
+                if (filterOptions != "⮌")
+                {
+                    _manipulator.ComposeFile(selectedOptions, filterOptions);
+                    break;
+                }
+                
+            }
+            
         }
+
+        private string GetDateFilter()
+        {
+            List<string> dateFilterOptions = new List<string>() { "today", "in 7 days", "for a month", "all time" };
+            return ShowOptions(dateFilterOptions, "Select [green]range[/]!", true);
+
+        }
+
 
         private void SelectDirectory()
         {
@@ -89,39 +115,27 @@ namespace FileSorter.UI
             }   
         }
 
-        private string BrowsePrompt(List<string> fileList)
-        {
-            return AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                .Title("Select [green]folder[/]!")
-                .PageSize(10)
-                .MoreChoicesText("[grey](Move up and down)[/]")
-                .AddChoices(fileList));
-        }
+
         private string GetDirectories()
         {
             ShowHeader("Browse Directory");
             List<string> files = new List<string>() { "\u2713", "\u2B8C" };
             files.AddRange(_manipulator.GetSubDirectories().Select(l => l.ToString()).ToList());
-            return BrowsePrompt(files);
+            return ShowOptions(files, "Select [green]folder[/]!");
         }
 
         private string GetAllFiles()
         {
             ShowHeader("Browse Directory");
             var fileList = _manipulator.GetDirectoryAllObjects().Select(l => l.ToString()).ToList();
-            return BrowsePrompt(fileList);
+            return ShowOptions(fileList, "Select [green]folder[/]!");
         }
 
         private string BrowseDrive()
         {
             ShowHeader("Browse Drive");
-            return AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                .Title("Select [green]drive[/]!")
-                .PageSize(10)
-                .MoreChoicesText("[grey](Move up and down)[/]")
-                .AddChoices(DriveInfo.GetDrives().Select(l => l.Name).ToList()));
+            var driveList = DriveInfo.GetDrives().Select(l => l.Name).ToList();
+            return ShowOptions(driveList, "Select [green]drive[/]!");
         }
 
 
